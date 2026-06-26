@@ -1,83 +1,81 @@
-# MikroTik Quest 🎯
+# MikroTik Quest
 
-![cover](cover.png)
+![cover](img/cover.png)
 
-Quiz educativo interactivo basado en el **Curso Completo MikroTik** del Ing. Alexis Uranga. Pon a prueba tus conocimientos para la certificación **MTCNA** con 5 modos de juego.
+Interactive quiz based on the **MikroTik Complete Course** by Ing. Alexis Uranga. Test your knowledge for the **MTCNA** certification with 5 game modes.
 
----
+## Game Modes
 
-## 🎮 Modos de juego
-
-| Modo | Pts | Descripción |
+| Mode | Pts | Description |
 |------|-----|-------------|
-| **Quiz** | 10 | Preguntas de opción múltiple |
-| **True/False** | 5 | Afirmaciones para calificar como verdaderas o falsas |
-| **Word Scramble** | 15 | Ordena las letras para formar la palabra correcta |
-| **Fill-in** | 10 | Completa la frase con la palabra faltante |
-| **Case Scenarios** | 20 | Escenarios prácticos del mundo real |
+| Quiz | 10 | Multiple choice questions |
+| True/False | 5 | Evaluate statements as true or false |
+| Word Scramble | 15 | Rearrange letters to form the correct word |
+| Fill-in | 10 | Complete the sentence with the missing word |
+| Case Scenarios | 20 | Real-world practical scenarios |
 
-## ⚡ Sistema de puntuación
+## Scoring System
 
-- **Racha x2**: +5 pts extra
-- **Racha x3+**: +10 pts extra
-- Cada modo otorga puntos base distintos
-- La racha máxima se registra y muestra al final
+- **Streak x2**: +5 pts bonus
+- **Streak x3+**: +10 pts bonus
+- Each mode awards different base points
+- Maximum streak is recorded and displayed at the end
 
-## 🚀 Cómo ejecutar
+## Getting Started
 
 ### Windows
 ```bat
 start index.html
 ```
-o haz doble clic en `run.bat`.
+Or double-click `run.bat`.
 
 ### Linux / macOS
 ```sh
 xdg-open index.html
 ```
-o ejecuta `./run.sh`.
+Or run `./run.sh`.
 
-## 📁 Estructura del proyecto
+## Project Structure
 
 ```
 mikrotik/
-├── index.html           ← Juego principal
-├── run.bat              ← Lanzador Windows
-├── run.sh               ← Lanzador Linux/macOS
-├── license.json         ← Licencia y creditos
-├── package.json         ← Metadatos del proyecto
-├── favicon.svg          ← Favicon del juego
-├── cover.png            ← Portada para README
+├── index.html           -- Main game file
+├── run.bat              -- Windows launcher
+├── run.sh               -- Linux/macOS launcher
+├── favicon.svg          -- Game favicon
+├── cover.png            -- README cover image
+├── license.json         -- License and credits
+├── package.json         -- Project metadata
 ├── img/
-│   └── *.webp           ← Imagen para metadatos
+│   └── *.webp           -- OG metadata image
 └── sounds/
-    ├── mario-1-up.mp3   ← Sonido acierto
-    ├── error-soundss.mp3← Sonido error
-    ├── win-gameshow.mp3 ← Sonido victoria
-    └── losssss.mp3      ← Sonido derrota
+    ├── mario-1-up.mp3   -- Correct answer sound
+    ├── error-soundss.mp3-- Wrong answer sound
+    ├── win-gameshow.mp3 -- Victory sound
+    └── losssss.mp3      -- Defeat sound
 ```
 
-## 🧠 Temas cubiertos
+## Topics Covered
 
-Basado en 91 páginas del curso completo, incluye:
+Based on 91 pages of the complete course:
 
-- ✓ Conceptos básicos de networking
-- ✓ Configuración de interfaces y bridges
-- ✓ Firewall, NAT y filtrado
-- ✓ Routing estático y dinámico
-- ✓ Wireless y seguridad
-- ✓ DHCP, DNS, QoS
-- ✓ VPN y túneles
-- ✓ Monitoreo y diagnóstico
-- ✓ Scripting en RouterOS
-- ✓ Casos prácticos de administración
+- [x] Networking fundamentals
+- [x] Interface and bridge configuration
+- [x] Firewall, NAT and filtering
+- [x] Static and dynamic routing
+- [x] Wireless and security
+- [x] DHCP, DNS, QoS
+- [x] VPNs and tunnels
+- [x] Monitoring and diagnostics
+- [x] RouterOS scripting
+- [x] Administration case studies
 
-## 🛠️ Tecnologías
+## Built With
 
-- HTML5 + CSS3 + JavaScript vanilla
-- Font Awesome 6.5.1 (iconos)
-- Sin dependencias externas
+- HTML5 + CSS3 + vanilla JavaScript
+- Font Awesome 6.5.1 (icons)
+- No external dependencies
 
 ---
 
-> **Créditos:** Contenido basado en el curso del Ing. Alexis Uranga.
+**Credits:** Content based on the course by Ing. Alexis Uranga. Developed by 0noxtackore.
