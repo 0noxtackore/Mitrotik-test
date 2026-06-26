@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta property="og:title" content="MikroTik Quest">
+<meta property="og:description" content="Pon a prueba tus conocimientos de MikroTik con 5 modos de juego. Preparate para la certificacion MTCNA!">
+<meta property="og:image" content="https://mikrotik-game.netlify.app/img/retro-gaming-1920-x-1080-wallpaper-vbikffqtku4vww9m.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<title>MikroTik Quest</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#1a2a4a;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#startScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;gap:14px;overflow:hidden}
+#startScreen h1{font-size:clamp(1.6em,5vw,2.6em);color:#d47500;text-align:center;line-height:1.2}
+#startScreen h1 small{display:block;font-size:.38em;color:#1a2a4a;letter-spacing:2px;font-weight:400}
+.sub{color:#556;font-size:.9em;text-align:center}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:480px}
+.mopt{background:#fff;border:2px solid #dde;border-radius:10px;padding:8px 4px;cursor:pointer;text-align:center;transition:all .2s;font-size:.75em;font-weight:500;color:#1a2a4a;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.mopt:hover{border-color:#f7931e;box-shadow:0 2px 8px rgba(247,147,30,.15)}
+.mopt.sel{border-color:#f7931e;background:linear-gradient(135deg,#fff6ed,#fff);color:#d47500;box-shadow:0 2px 12px rgba(247,147,30,.2)}
+.mopt i{font-size:1.3em;display:block;margin-bottom:2px;color:#f7931e}
+.qrow{display:flex;gap:8px;justify-content:center}
+.qrow label{background:#fff;border:2px solid #dde;border-radius:8px;padding:6px 18px;cursor:pointer;font-size:.85em;font-weight:500;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.qrow label:hover{border-color:#f7931e}
+.qrow input:checked+span{color:#d47500;font-weight:700}
+.qrow input{display:none}
+.qrow label:has(input:checked){border-color:#f7931e;background:#fff6ed}
+.sbtn{background:linear-gradient(135deg,#f7931e,#d47500);border:none;border-radius:12px;padding:14px 44px;font-size:1.2em;font-weight:700;color:#fff;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(247,147,30,.3)}
+.sbtn:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(247,147,30,.4)}
+
+#gameScreen{display:none;flex-direction:column;height:100%;padding:8px;gap:4px;overflow:hidden}
+.tbar{display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:6px;background:#fff;border-radius:10px;padding:6px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eef}
+.tbar .ti{color:#d47500;font-weight:600;font-size:.85em}
+.tbar .ti i{margin-right:4px}
+.tbar .st{display:flex;gap:8px;font-size:.75em;color:#667}
+.tbar .st span{background:#f7f9fc;padding:2px 8px;border-radius:5px}
+.tbar .st b{color:#d47500}
+.exitb{background:#f0f4f8;border:1px solid #dde;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75em;color:#667;transition:all .2s;flex-shrink:0}
+.exitb:hover{background:#fee;border-color:#dc3545;color:#dc3545}
+.prog{height:3px;background:#eef;border-radius:2px;flex-shrink:0;overflow:hidden}
+.prog div{height:100%;background:linear-gradient(90deg,#f7931e,#ffb347);border-radius:2px;transition:width .4s;width:0%}
+.garea{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;gap:5px;background:#fff;border-radius:10px;padding:8px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #eef}
+.ctag{display:inline-block;background:#fff6ed;color:#d47500;padding:2px 10px;border-radius:10px;font-size:.65em;font-weight:600;flex-shrink:0;width:fit-content}
+.qtxt{font-size:clamp(.82em,2vw,.95em);line-height:1.4;padding:6px 10px;background:#f7f9fc;border-radius:6px;border-left:3px solid #f7931e;flex-shrink:0;max-height:28%;overflow:hidden}
+.opts{display:flex;flex-direction:column;gap:4px;flex:1;overflow:hidden;min-height:0}
+.opt{background:#fafbfc;border:2px solid #eef;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .15s;font-size:clamp(.78em,1.8vw,.9em);flex-shrink:0}
+.opt:hover{background:#fff6ed;border-color:#f7931e}
+.opt.cr{background:#e8f5e9;border-color:#28a745}
+.opt.wr{background:#ffebee;border-color:#dc3545}
+.opt.dis{cursor:default;opacity:.5}
+.tfr{display:flex;gap:8px;justify-content:center;flex-shrink:0}
+.tfr button{background:#fafbfc;border:2px solid #eef;border-radius:8px;padding:10px 24px;cursor:pointer;font-size:.9em;font-weight:600;transition:all .15s;min-width:90px}
+.tfr button:hover{border-color:#f7931e;background:#fff6ed}
+.tfr .tv.cr, .tfr .fv.cr{background:#e8f5e9;border-color:#28a745}
+.tfr .tv.wr, .tfr .fv.wr{background:#ffebee;border-color:#dc3545}
+.tfr button:disabled{cursor:default;opacity:.7}
+.wa{display:flex;flex-direction:column;gap:6px;align-items:center;flex:1;justify-content:center}
+.sls{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.sl{background:#f7f9fc;border:2px dashed #cce;border-radius:5px;width:32px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em;transition:all .15s;color:#1a2a4a}
+.sl.f{background:#e8f5e9;border-color:#28a745;border-style:solid}
+.lts{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.lt{background:linear-gradient(135deg,#fff6ed,#fff);border:2px solid #f7931e;border-radius:5px;width:32px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em;cursor:pointer;transition:all .15s;color:#d47500}
+.lt:hover{background:#f7931e;color:#fff;transform:scale(1.08)}
+.wa .exitb{padding:3px 12px;font-size:.75em}
+.finp{background:#f7f9fc;border:2px solid #dde;border-radius:6px;padding:8px 12px;color:#1a2a4a;font-size:.95em;width:100%;max-width:280px;text-align:center;outline:none;transition:border-color .15s;flex-shrink:0}
+.finp:focus{border-color:#f7931e}
+.finp.cr{border-color:#28a745;background:#e8f5e9}
+.finp.wr{border-color:#dc3545;background:#ffebee}
+.bbar{display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:6px}
+.bbar .ctr{font-size:.75em;color:#889}
+.nbtn{background:linear-gradient(135deg,#f7931e,#d47500);border:none;border-radius:7px;padding:6px 22px;font-weight:600;color:#fff;cursor:pointer;transition:all .2s;font-size:.85em;flex-shrink:0}
+.nbtn:hover{box-shadow:0 2px 12px rgba(247,147,30,.3)}
+.nbtn.sm{padding:5px 16px;font-size:.8em}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:999}
+.mc{background:#fff;border-radius:16px;padding:24px;max-width:340px;width:88%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+.mc .micon{font-size:2.5em;margin-bottom:6px}
+.mc h2{color:#1a2a4a;font-size:1.15em;margin-bottom:4px}
+.mc p{color:#556;font-size:.85em;margin-bottom:12px}
+.mc .mb{background:linear-gradient(135deg,#f7931e,#d47500);border:none;border-radius:8px;padding:8px 28px;font-weight:600;color:#fff;cursor:pointer;margin:3px;font-size:.85em}
+.mc .mb.sec{background:#eef;color:#1a2a4a}
+
+#modalEnd .mc{border-top:4px solid #f7931e}
+#modalEnd .bigs{font-size:2.2em;font-weight:700;color:#d47500;margin:6px 0}
+#modalEnd .subs{color:#667;font-size:.8em;margin-bottom:8px}
+
+#toast{position:fixed;top:20px;right:20px;z-index:9999;display:none;max-width:320px}
+.toast-inner{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;font-size:.85em;border-left:4px solid #28a745}
+.toast-inner.err{border-left-color:#dc3545}
+.toast-inner .ti{font-size:.9em;color:#667}
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <h1>MIKROTIK QUEST <i class="fa-solid fa-network-wired" style="color:#f7931e"></i><small>Aprende Redes y MikroTik jugando</small></h1>
+  <div class="sub"><i class="fa-solid fa-book-open"></i> Basado en "Curso FOC Redes Basicas con MikroTik"</div>
+  <div style="font-size:.8em;color:#667"><i class="fa-solid fa-gamepad"></i> Elige modo:</div>
+  <div class="mgrid">
+    <div class="mopt sel" data-m="quiz" onclick="pickM(this)"><i class="fa-regular fa-circle-question"></i>Quiz</div>
+    <div class="mopt" data-m="truefalse" onclick="pickM(this)"><i class="fa-regular fa-circle-check"></i>V/F</div>
+    <div class="mopt" data-m="scramble" onclick="pickM(this)"><i class="fa-solid fa-puzzle-piece"></i>Palabras</div>
+    <div class="mopt" data-m="fill" onclick="pickM(this)"><i class="fa-solid fa-pen"></i>Completar</div>
+    <div class="mopt" data-m="scenario" onclick="pickM(this)"><i class="fa-solid fa-globe"></i>Casos</div>
+  </div>
+  <div style="font-size:.8em;color:#667"><i class="fa-solid fa-list"></i> Preguntas:</div>
+  <div class="qrow">
+    <label><input type="radio" name="qty" value="5" checked><span>5</span></label>
+    <label><input type="radio" name="qty" value="10"><span>10</span></label>
+    <label><input type="radio" name="qty" value="0"><span>Todas</span></label>
+  </div>
+  <button class="sbtn" onclick="startG()"><i class="fa-solid fa-play"></i> COMENZAR</button>
+</div>
+
+<div id="gameScreen">
+  <div class="tbar">
+    <span class="ti"><i class="fa-solid fa-router"></i><span id="gMode">Quiz</span></span>
+    <div class="st">
+      <span><i class="fa-regular fa-star"></i> <b id="gScore">0</b></span>
+      <span><i class="fa-solid fa-fire"></i> <b id="gStreak">0</b></span>
+      <span><i class="fa-regular fa-circle-check"></i> <b id="gPct">0%</b></span>
+    </div>
+    <button class="exitb" onclick="exitG()"><i class="fa-solid fa-sign-out-alt"></i> Salir</button>
+  </div>
+  <div class="prog"><div id="gProg"></div></div>
+  <div class="garea" id="gArea">
+    <span class="ctag" id="gCat">MikroTik</span>
+    <div class="qtxt" id="gQ">Cargando...</div>
+    <div class="opts" id="gOpts"></div>
+    <div class="tfr" id="gTF" style="display:none"></div>
+    <div class="wa" id="gWord" style="display:none">
+      <div class="sls" id="gSlts"></div>
+      <div class="lts" id="gLts"></div>
+      <button class="exitb" onclick="rstWord()"><i class="fa-solid fa-rotate"></i> Reiniciar</button>
+    </div>
+    <div id="gFillC" style="display:none;flex-direction:column;align-items:center;gap:6px;flex:1;justify-content:center">
+      <input class="finp" id="gFinp" type="text" placeholder="Escribe la respuesta..." autocomplete="off">
+      <button class="nbtn sm" onclick="ckFill()"><i class="fa-regular fa-circle-check"></i> Comprobar</button>
+    </div>
+  </div>
+  <div class="bbar">
+    <span class="ctr" id="gCtr">1/10</span>
+    <button class="nbtn" id="gNbtn" onclick="nextQ()">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<div class="modal" id="modalEnd">
+  <div class="mc">
+    <div class="micon" id="endIcon">&#x1F389;</div>
+    <h2 id="endTitle">INCREIBLE!</h2>
+    <div class="bigs" id="endScore">0 pts</div>
+    <div class="subs" id="endMsg"></div>
+    <button class="mb" onclick="closeEnd(true)"><i class="fa-solid fa-rotate"></i> Otra vez</button>
+    <button class="mb sec" onclick="closeEnd(false)"><i class="fa-solid fa-house"></i> Menu</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div class="modal" id="modalFb" style="align-items:flex-start;padding-top:15vh">
+  <div class="mc" style="text-align:left">
+    <div id="mfbIcon" style="font-size:1.8em;text-align:center">&#x2705;</div>
+    <h2 id="mfbTitle" style="text-align:center">Correcto!</h2>
+    <p id="mfbMsg" style="text-align:center"></p>
+    <button class="mb" id="mfbBtn" onclick="closeFb()" style="display:block;margin:0 auto"><i class="fa-solid fa-arrow-right"></i> Continuar</button>
+  </div>
+</div>
+
+<script>
+const winMsgs = [
+  '\uD83C\uDF1F Excelente! Eso es tener nivel de ingeniero.',
+  '\uD83C\uDF89 Correcto! Vas derecho a la certificacion MTCNA!',
+  '\uD83C\uDFC6 Asi se hace! Lo estas clavando.',
+  '\u2B50 Impresionante! Sigue asi y seras un experto.',
+  '\uD83D\uDE80 Perfecto! Ya dominas este tema.',
+  '\uD83D\uDCAA Fuerte! Eso es conocimiento solido.',
+];
+
+const failMsgs = [
+  '\uD83D\uDCAA No te rindas! Los cracks tambien fallaron mil veces.',
+  '\uD83D\uDE0A Tranquilo! Hasta los ingenieros empezaron desde cero.',
+  '\uD83D\uDCD6 Error = aprendizaje. Estas mas cerca de ser experto!',
+  '\uD83D\uDC4A Tu puedes! La proxima te sale con mas fuerza.',
+  '\uD83D\uDE4F Cada fallo es un pelda\u00F1o hacia la maestria.',
+  '\uD83D\uDD25 No pasa nada! La perseverancia es la clave.',
+  '\uD83D\uDCAA Animo! Edison fallo 1000 veces antes de la bombilla.',
+  '\uD83E\uDD1D Sigue! El conocimiento llega con la practica.',
+];
+
+const data = {
+  quiz: [
+{q:'IP por defecto de MikroTik?',opts:['192.168.1.1', '192.168.88.1', '10.0.0.1', '172.16.0.1'],ans:1,cat:'MikroTik'},
+{q:'Significado de NAT?',opts:['Network Address Translation', 'Network Access Terminal', 'Node Active Transfer', 'Net Address Tool'],ans:0,cat:'Redes'},
+{q:'Usuario por defecto MikroTik?',opts:['root', 'admin', 'user', 'mikrotik'],ans:1,cat:'MikroTik'},
+{q:'Nivel licencia usuarios ilimitados?',opts:['Level 3', 'Level 4', 'Level 5', 'Level 6'],ans:3,cat:'MikroTik'},
+{q:'Anho fundacion MikroTik?',opts:['1996', '2002', '1990', '2000'],ans:0,cat:'MikroTik'},
+{q:'Que es RouterOS?',opts:['Hardware MikroTik', 'Sistema operativo MikroTik', 'Un cable', 'Un conector'],ans:1,cat:'MikroTik'},
+{q:'IP de loopback?',opts:['0.0.0.0', '127.0.0.1', '255.255.255.0', '192.168.0.1'],ans:1,cat:'Redes'},
+{q:'Mascara subred Clase C?',opts:['255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.255'],ans:2,cat:'Redes'},
+{q:'Funcion del DHCP?',opts:['Traducir nombres', 'Asignar IPs automaticamente', 'Enrutar', 'Bloquear'],ans:1,cat:'Redes'},
+{q:'Que significa MTCNA?',opts:['MikroTik Certified Network Associate', 'MikroTik Total Control', 'Master Training Cert', 'MikroTik Technical Cert'],ans:0,cat:'Certificacion'},
+{q:'Cual NO es conector fibra?',opts:['SC', 'LC', 'RJ45', 'FC'],ans:2,cat:'Fibra'},
+{q:'Que significa OLT?',opts:['Optical Line Terminal', 'Optical Light Transmitter', 'Online Terminal', 'Output Line Transceiver'],ans:0,cat:'Fibra'},
+{q:'Modo WiFi para punto de acceso?',opts:['Station', 'AP Bridge', 'WDS Slave', 'Bridge'],ans:1,cat:'WiFi'},
+{q:'Chain que protege el router?',opts:['Forward', 'Input', 'Output', 'NAT'],ans:1,cat:'Firewall'},
+{q:'Restaurar backup .rsc?',opts:['import file=nombre.rsc', 'restore file=nombre.rsc', 'load file=nombre.rsc', 'apply file=nombre.rsc'],ans:0,cat:'MikroTik'},
+{q:'Que es un bogon?',opts:['Un virus', 'IP falsa no asignada', 'Cable de red', 'Protocolo'],ans:1,cat:'Seguridad'},
+{q:'Que hace DROP?',opts:['Acepta', 'Descarta sin respuesta', 'Rechaza con error', 'Redirige'],ans:1,cat:'Firewall'},
+{q:'Puerto Winbox por defecto?',opts:['22', '80', '8291', '443'],ans:2,cat:'MikroTik'},
+{q:'Fibra para largas distancias?',opts:['Multimodo', 'Monomodo', 'Plastica', 'Coaxial'],ans:1,cat:'Fibra'},
+{q:'Diametro nucleo monomodo?',opts:['50 um', '62.5 um', '8-10 um', '125 um'],ans:2,cat:'Fibra'},
+{q:'Que hace masquerade?',opts:['Asigna IP fija', 'Oculta IP privada tras IP publica', 'Bloquea', 'Redirige'],ans:1,cat:'Firewall'},
+{q:'Certificacion mas basica?',opts:['MTCRE', 'MTCNA', 'MTCWE', 'MTCSE'],ans:1,cat:'Certificacion'},
+{q:'Diferencia ONU vs ONT?',opts:['Misma esencia, ONT=UIT-T, ONU=IEEE', 'ONT mas rapida', 'ONU solo fibra', 'ONT cable coaxial'],ans:0,cat:'Fibra'},
+{q:'IP Clase A privada?',opts:['192.168.0.0/16', '172.16.0.0/12', '10.0.0.0/8', '169.254.0.0/16'],ans:2,cat:'Redes'},
+{q:'Acceso remoto seguro?',opts:['Telnet', 'SSH', 'HTTP', 'FTP'],ans:1,cat:'Seguridad'},
+{q:'Splitter en fibra?',opts:['Amplificador', 'Divisor de senal optica', 'Conector', 'Cable especial'],ans:1,cat:'Fibra'},
+{q:'Mide potencia optica?',opts:['OTDR', 'Power Meter', 'Cleaver', 'Fusionadora'],ans:1,cat:'Fibra'},
+{q:'Costo Level 6?',opts:['$45', '$95', '$250', '$500'],ans:2,cat:'MikroTik'},
+{q:'Que significa SSID?',opts:['Service Set Identifier', 'System Security ID', 'Signal Strength ID', 'Server Service ID'],ans:0,cat:'WiFi'},
+{q:'Pulido con menor perdida?',opts:['PC', 'UPC', 'APC', 'LC'],ans:2,cat:'Fibra'},
+{q:'Funcion DNS Cache?',opts:['Asignar IPs', 'Almacenar webs visitadas', 'Bloquear', 'Enrutar'],ans:1,cat:'Redes'},
+{q:'Chain para bloquear YouTube?',opts:['Input', 'Output', 'Forward', 'NAT'],ans:2,cat:'Firewall'},
+{q:'Que es Pigtail?',opts:['Cable conector 1 extremo, sin terminar otro', 'Fusionadora', 'Adaptador', 'Splitter'],ans:0,cat:'Fibra'},
+{q:'Que significa WDM?',opts:['Wave Division Multiplexing', 'Wireless Data Mode', 'Wide Domain Network', 'Web Data Management'],ans:0,cat:'Fibra'},
+{q:'Rango Clase B privada?',opts:['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '169.254.0.0/16'],ans:1,cat:'Redes'},
+{q:'/ip firewall filter hace?',opts:['Configura NAT', 'Crea reglas firewall', 'Configura DNS', 'Backup'],ans:1,cat:'Firewall'},
+{q:'Distancia maxima ODN?',opts:['5 km', '10 km', '20 km', '40 km'],ans:2,cat:'Fibra'},
+{q:'Seguridad WiFi recomendada?',opts:['WEP', 'WPA2-PSK', 'WPA3', 'Open'],ans:1,cat:'WiFi'},
+{q:'Fast Conector?',opts:['No necesita pulido', 'USB-C', 'RJ45', 'HDMI'],ans:0,cat:'Fibra'},
+{q:'Pais fabricante MikroTik?',opts:['China', 'Letonia', 'EEUU', 'Alemania'],ans:1,cat:'MikroTik'},
+{q:'Funcion del Bridge?',opts:['Conectar redes', 'Unir interfaces como switch', 'Dar IP', 'Filtrar'],ans:1,cat:'MikroTik'},
+{q:'DNS Transparente?',opts:['Oculta visitas', 'Obliga usar DNS del router', 'Acelera', 'Cifra'],ans:1,cat:'Redes'},
+{q:'Maximo hosts Clase C?',opts:['254', '65534', '16777214', '126'],ans:0,cat:'Redes'},
+{q:'Cable mas comun 2022?',opts:['Cat3', 'Cat5', 'Cat5e y Cat6', 'Cat7'],ans:2,cat:'Redes'},
+{q:'Que significa CCR?',opts:['Central Core Router', 'Cloud Core Router', 'Comprehensive Control Router', 'Certified Computer Router'],ans:1,cat:'MikroTik'}
+],
+  truefalse: [
+{q:'MikroTik fundada en 1996.',ans:true,cat:'MikroTik'},
+{q:'IP default MikroTik es 192.168.88.1.',ans:true,cat:'MikroTik'},
+{q:'Mascara Clase A es 255.255.255.0.',ans:false,cat:'Redes'},
+{q:'Telnet es mas seguro que SSH.',ans:false,cat:'Seguridad'},
+{q:'RouterOS solo linea de comandos.',ans:false,cat:'MikroTik'},
+{q:'Fibra monomodo tiene nucleo mas pequenho.',ans:true,cat:'Fibra'},
+{q:'MTCNA es certificacion mas avanzada.',ans:false,cat:'Certificacion'},
+{q:'DHCP asigna IPs manualmente.',ans:false,cat:'Redes'},
+{q:'127.0.0.1 es loopback.',ans:true,cat:'Redes'},
+{q:'Firewall Input protege el router.',ans:true,cat:'Firewall'},
+{q:'NAT = Network Address Translation.',ans:true,cat:'Redes'},
+{q:'Fibra multimodo llega a 10 km.',ans:false,cat:'Fibra'},
+{q:'Winbox solo para Linux.',ans:false,cat:'MikroTik'},
+{q:'Bridge une interfaces como switch.',ans:true,cat:'MikroTik'},
+{q:'Splitters dividen senal optica.',ans:true,cat:'Fibra'},
+{q:'10.0.0.0/8 es Clase B.',ans:false,cat:'Redes'},
+{q:'Layer7 usa regex para filtrar.',ans:true,cat:'Firewall'},
+{q:'AP Bridge = punto de acceso.',ans:true,cat:'WiFi'},
+{q:'OLT = Optical Line Terminal.',ans:true,cat:'Fibra'},
+{q:'Level 3 cuesta $45.',ans:false,cat:'MikroTik'},
+{q:'Bogon = IP falsa no asignada.',ans:true,cat:'Seguridad'},
+{q:'Cat5e y Cat6 mas usados 2022.',ans:true,cat:'Redes'},
+{q:'Fusionadora corta fibra.',ans:false,cat:'Fibra'},
+{q:'Puerto 8291 es Winbox.',ans:true,cat:'MikroTik'}
+],
+  scramble: [
+{word:'ROUTEROS',hint:'Sistema operativo MikroTik',cat:'MikroTik'},
+{word:'WINBOX',hint:'App grafica MikroTik',cat:'MikroTik'},
+{word:'SWITCH',hint:'Conecta equipos en LAN',cat:'Redes'},
+{word:'BRIDGE',hint:'Une interfaces como un segmento',cat:'MikroTik'},
+{word:'NAT',hint:'Traduce IPs privadas a publicas',cat:'Redes'},
+{word:'DHCP',hint:'Asigna IPs automaticamente',cat:'Redes'},
+{word:'FIREWALL',hint:'Protege la red bloqueando trafico',cat:'Seguridad'},
+{word:'MONOMODO',hint:'Fibra de nucleo fino, larga distancia',cat:'Fibra'},
+{word:'MULTIMODO',hint:'Fibra de nucleo grande, corta distancia',cat:'Fibra'},
+{word:'SPLITTER',hint:'Divisor de senal optica',cat:'Fibra'},
+{word:'BOGON',hint:'IP falsa o no asignada',cat:'Seguridad'},
+{word:'LOOPBACK',hint:'Direccion 127.0.0.1',cat:'Redes'},
+{word:'MTCNA',hint:'Certificacion basica MikroTik',cat:'Certificacion'},
+{word:'PIGTAIL',hint:'Cable conector + fibra pelada',cat:'Fibra'},
+{word:'SFP',hint:'Modulo optico para fibra',cat:'Fibra'},
+{word:'SSID',hint:'Nombre de red WiFi',cat:'WiFi'},
+{word:'TELNET',hint:'Protocolo inseguro acceso remoto',cat:'Redes'},
+{word:'CLEAVER',hint:'Herramienta corte precision fibra',cat:'Fibra'}
+],
+  fill: [
+{q:'IP default MikroTik: 192.168.88.___',ans:'1',cat:'MikroTik'},
+{q:'Usuario default MikroTik: ___',ans:'admin',cat:'MikroTik'},
+{q:'Mascara Clase C: 255.255.255.___',ans:'0',cat:'Redes'},
+{q:'Certificacion basica: MT___',ans:'CNA',cat:'Certificacion'},
+{q:'Protocolo seguro acceso remoto: ___',ans:'SSH',cat:'Seguridad'},
+{q:'Licencia usuarios ilimitados: Level ___',ans:'6',cat:'MikroTik'},
+{q:'Loopback: 127.0.0.___',ans:'1',cat:'Redes'},
+{q:'MikroTik fundada anho: ___',ans:'1996',cat:'MikroTik'},
+{q:'Modo WiFi punto acceso: AP ___',ans:'Bridge',cat:'WiFi'},
+{q:'OLT = Optical Line ___',ans:'Terminal',cat:'Fibra'},
+{q:'Firewall descarta = ___',ans:'Drop',cat:'Firewall'},
+{q:'Firewall aprueba = ___',ans:'Accept',cat:'Firewall'},
+{q:'Conector fibra mas popular: ___',ans:'SC',cat:'Fibra'},
+{q:'Pais origen MikroTik: ___',ans:'Letonia',cat:'MikroTik'},
+{q:'Puerto Winbox default: ___',ans:'8291',cat:'MikroTik'}
+],
+  scenario: [
+{desc:'Admin de empresa con 30 PCs. MikroTik RB951G-2HnD. ISP da IP por DHCP. Que haces?',opts:['ether1 a ISP, DHCP Client, Bridge LAN ether2-5, IP 192.168.1.1/24, DHCP Server, NAT masquerade', 'Conectar todo a ether1, IP fija, sin NAT', 'Solo WiFi, no configurar puertos LAN', 'Misma IP en todos los puertos, sin Bridge'],ans:0,cat:'Caso Practico'},
+{desc:'Cliente no accede a YouTube. Jefe pide bloquearlo. Como?',opts:['Bloquear puerto 80', "Layer7 regex '^.+(youtube|googlevideo).+$' + regla Forward DROP", 'Eliminar DNS de YouTube', 'Apagar router 9am'],ans:1,cat:'Firewall'},
+{desc:'Servidor web 192.168.1.50:80 accesible desde Internet. Config?',opts:['NAT dstnat: chain=dstnat, protocol=tcp, dst-port=80, in-interface=WAN, action=dstnat, to-address=192.168.1.50', 'DMZ sin reglas', 'Ping al servidor', 'Solo DHCP'],ans:0,cat:'Firewall'},
+{desc:'ISP necesita conectar 16 aptos con fibra. Arquitectura?',opts:['Red PON: OLT central -> Splitter 1x16 -> ONU/ONT cada apto', 'Switch gigante en la calle con 16 cables', '16 routers independientes', 'Solo WiFi central'],ans:0,cat:'Fibra'},
+{desc:'Cable fibra no pasa luz. Tienes laser visualizador. Que haces?',opts:['Laser en extremo, ver luz escapando = rotura, empalmar con fusionadora o fast connector', 'Tirar cable hasta estirar', 'Cortar ambos extremos sin revisar', 'Usar tester Ethernet'],ans:0,cat:'Fibra'},
+{desc:'Olvidaste password admin MikroTik nuevo. Como recuperas acceso?',opts:['No se puede, comprar otro', 'Reset con boton reset durante arranque, borra config', 'Llamar a MikroTik', 'SSH con user root'],ans:1,cat:'MikroTik'},
+{desc:'Jefe pide WiFi invitados separada de red interna. Implementacion?',opts:['WiFi Virtual (Virtual AP) con otro SSID, Security Profile, Default Forward off, otro Bridge y DHCP', 'Misma WiFi para todos', 'Deshabilitar WiFi', 'Router distinto'],ans:0,cat:'WiFi'},
+{desc:'Alguien hace port scan a MikroTik desde Internet. Proteccion?',opts:["Firewall: detectar con 'psd=21,3s,3,1', agregar a lista bloqueados, DROP", 'Cambiar IP cada hora', 'Apagar router noche', 'Password mas larga'],ans:0,cat:'Seguridad'},
+{desc:'Backup completo incluyendo usuarios y passwords. Tipo?',opts:['Backup encriptado .backup (System -> Backup), restaura desde Files -> Restore', 'Backup .rsc texto plano sin passwords', 'Copiar config a mano', 'Exportar cada seccion'],ans:0,cat:'MikroTik'},
+{desc:'Interconectar 2 edificios separados 2 km con fibra. Que recomiendas?',opts:['Fibra monomodo OS2 con conectores SC/APC, soporta larga distancia, baja atenuacion', 'Fibra multimodo OM3 mas barata', 'UTP Cat6 mas facil', 'Monomodo conectores ST'],ans:0,cat:'Fibra'}
+]
+};
+
+let S = {};
+
+function pickM(el) {
+  document.querySelectorAll('.mopt').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function startG() {
+  const mode = document.querySelector('.mopt.sel').dataset.m;
+  const qty = parseInt(document.querySelector('input[name="qty"]:checked').value) || 0;
+  const pool = data[mode]; const total = qty > 0 ? Math.min(qty, pool.length) : pool.length;
+  const idx = [...Array(pool.length).keys()]; for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}
+  S = {mode,pool,idx:idx.slice(0,total),total,cur:0,score:0,ok:0,streak:0,best:0,sel:false,placed:[],avail:[],word:''};
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='flex';
+  const lb = {quiz:'Quiz',truefalse:'V/F',scramble:'Palabras',fill:'Completar',scenario:'Casos'};
+  document.getElementById('gMode').textContent = lb[mode];
+  rQ();
+}
+
+function exitG() {
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('startScreen').style.display='flex';
+}
+
+function uSt() {
+  document.getElementById('gScore').textContent = S.score;
+  document.getElementById('gStreak').textContent = S.streak;
+  document.getElementById('gPct').textContent = S.cur > 0 ? Math.round(S.ok/S.cur*100)+'%' : '0%';
+  document.getElementById('gCtr').textContent = Math.min(S.cur+1,S.total)+'/'+S.total;
+  document.getElementById('gProg').style.width = (S.cur/S.total*100)+'%';
+}
+
+function toast(t, err) {
+  const el = document.getElementById('toast');
+  el.innerHTML = '<div class="toast-inner' + (err ? ' err' : '') + '"><i class="' + (err ? 'fa-solid fa-circle-exclamation' : 'fa-regular fa-circle-check') + '" style="font-size:1.3em;' + (err ? 'color:#dc3545' : 'color:#28a745') + '"></i><span class="ti">' + t + '</span></div>';
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.style.display = 'none', 2000);
+}
+
+function showFb(t, msg) {
+  var ok = t === 'ok';
+  new Audio('sounds/' + (ok ? 'mario-1-up' : 'error-soundss') + '.mp3').play();
+  document.getElementById('mfbIcon').innerHTML = ok ? '\u2705' : '\u274C';
+  document.getElementById('mfbTitle').innerHTML = ok ? '\u2705 Correcto!' : '\u274C Incorrecto';
+  document.getElementById('mfbMsg').innerHTML = msg;
+  document.getElementById('modalFb').style.display = 'flex';
+}
+
+function closeFb() {
+  document.getElementById('modalFb').style.display = 'none';
+}
+
+function rQ() {
+  if (S.cur >= S.total) { showEnd(); return; }
+  S.sel = false;
+  const idx = S.idx[S.cur];
+  const q = S.pool[idx];
+  document.getElementById('gCat').textContent = q.cat || '';
+  document.getElementById('gOpts').style.display = 'none';
+  document.getElementById('gTF').style.display = 'none';
+  document.getElementById('gWord').style.display = 'none';
+  document.getElementById('gFillC').style.display = 'none';
+
+  if (S.mode === 'quiz' || S.mode === 'scenario') {
+    document.getElementById('gQ').textContent = q.q || q.desc;
+    document.getElementById('gOpts').style.display = 'flex';
+    document.getElementById('gOpts').innerHTML = q.opts.map((o,i) =>
+      '<div class="opt" onclick="sOpt(this,' + i + ')">' + o + '</div>'
+    ).join('');
+  } else if (S.mode === 'truefalse') {
+    document.getElementById('gQ').textContent = q.q;
+    document.getElementById('gTF').style.display = 'flex';
+    document.getElementById('gTF').innerHTML =
+      '<button class="tv" onclick="sTF(this,true)"><i class="fa-regular fa-circle-check"></i> Verdadero</button>' +
+      '<button class="fv" onclick="sTF(this,false)"><i class="fa-regular fa-circle-xmark"></i> Falso</button>';
+  } else if (S.mode === 'scramble') {
+    document.getElementById('gQ').textContent = q.hint;
+    document.getElementById('gWord').style.display = 'flex';
+    S.word = q.word;
+    const lt = q.word.split('');
+    S.avail = [...lt]; for(let i=S.avail.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S.avail[i],S.avail[j]]=[S.avail[j],S.avail[i]];}
+    S.placed = [];
+    rW();
+  } else if (S.mode === 'fill') {
+    document.getElementById('gFillC').style.display = 'flex';
+    document.getElementById('gQ').innerHTML = q.q.replace('___','<span style="color:#d47500;font-weight:700">___</span>');
+    const inp = document.getElementById('gFinp');
+    inp.value = ''; inp.className = 'finp'; inp.disabled = false;
+    setTimeout(() => inp.focus(), 50);
+  }
+  uSt();
+  document.getElementById('gNbtn').innerHTML = (S.cur >= S.total-1) ? '<i class="fa-solid fa-trophy"></i> Ver resultado' : 'Siguiente <i class="fa-solid fa-arrow-right"></i>';
+}
+
+function rW() {
+  document.getElementById('gSlts').innerHTML = S.word.split('').map((_,i) =>
+    '<div class="sl' + (S.placed[i] ? ' f' : '') + '">' + (S.placed[i] || '') + '</div>'
+  ).join('');
+  document.getElementById('gLts').innerHTML = S.avail.map((l,i) =>
+    '<div class="lt" onclick="pL(' + i + ')">' + l + '</div>'
+  ).join('');
+}
+
+function pL(i) {
+  if (S.sel) return;
+  const l = S.avail[i]; if (!l) return;
+  S.avail.splice(i,1); S.placed.push(l); rW();
+}
+
+function rstWord() {
+  if (S.sel) return;
+  const w = S.word; S.avail = w.split('');
+  for(let i=S.avail.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S.avail[i],S.avail[j]]=[S.avail[j],S.avail[i]];}
+  S.placed = []; rW();
+}
+
+function sOpt(el, i) {
+  if (S.sel) return; S.sel = true;
+  const q = S.pool[S.idx[S.cur]];
+  document.querySelectorAll('#gOpts .opt').forEach(o => o.classList.add('dis'));
+  if (i === q.ans) { el.classList.add('cr'); addP(S.mode==='scenario'?20:10,''); }
+  else { el.classList.add('wr'); document.querySelectorAll('#gOpts .opt')[q.ans].classList.add('cr'); addP(0,''); }
+}
+
+function sTF(el, v) {
+  if (S.sel) return; S.sel = true;
+  const q = S.pool[S.idx[S.cur]];
+  document.querySelectorAll('#gTF button').forEach(b => b.disabled = true);
+  if (v === q.ans) { el.classList.add('cr'); addP(5,''); }
+  else { el.classList.add('wr'); document.querySelectorAll('#gTF button').forEach(b => { if((b.classList.contains('tv')&&q.ans)||(b.classList.contains('fv')&&!q.ans)) b.classList.add('cr'); }); addP(0,''); }
+}
+
+function ckFill() {
+  if (S.sel) return;
+  const inp = document.getElementById('gFinp');
+  if (!inp.value.trim()) { toast('Escribe algo!', true); return; }
+  S.sel = true;
+  const q = S.pool[S.idx[S.cur]];
+  const ok = inp.value.trim().toUpperCase() === q.ans.toUpperCase();
+  if (ok) { inp.className = 'finp cr'; inp.disabled = true; addP(10,''); }
+  else { inp.className = 'finp wr'; inp.disabled = true; addP(0,'Respuesta: <b>' + q.ans + '</b>'); }
+}
+
+function addP(pts, extra) {
+  S.cur++;
+  if (pts > 0) { const b = S.streak >= 3 ? 10 : S.streak >= 2 ? 5 : 0; S.score += pts + b; S.ok++; S.streak++; if (S.streak > S.best) S.best = S.streak; }
+  else { S.streak = 0; }
+  uSt();
+  var em = pts > 0 ? winMsgs[Math.floor(Math.random() * winMsgs.length)] : failMsgs[Math.floor(Math.random() * failMsgs.length)];
+  var html = em;
+  if (pts > 0 && S.streak >= 2) html += '<br><span style="color:#d47500;font-weight:600">\uD83D\uDD25 Racha de ' + S.streak + '!</span>';
+  if (pts > 0) html += '<br><span style="color:#28a745;font-weight:600">+' + pts + ' pts</span>';
+  if (extra) html += '<br>' + extra;
+  showFb(pts > 0 ? 'ok' : 'fail', html);
+}
+
+function nextQ() {
+  if (S.mode === 'scramble') {
+    if (S.sel) { closeFb(); advance(); return; }
+    const ans = S.placed.join('');
+    if (ans.length < S.word.length) { toast('Coloca todas las letras!', true); return; }
+    S.sel = true;
+    if (ans.toUpperCase() === S.word.toUpperCase()) { addP(15,''); }
+    else { addP(0,'Era: <b>' + S.word + '</b>'); }
+    return;
+  }
+  if (!S.sel && S.mode !== 'fill') { toast('Selecciona una respuesta!', true); return; }
+  if (S.mode === 'fill' && !S.sel) { toast('Comprueba tu respuesta!', true); return; }
+  closeFb(); advance();
+}
+
+function advance() {
+  if (S.cur < S.total) rQ(); else showEnd();
+}
+
+function showEnd() {
+  const pct = S.total > 0 ? Math.round(S.ok/S.total*100) : 0;
+  new Audio('sounds/' + (pct >= 50 ? 'win-gameshow' : 'losssss') + '.mp3').play();
+  document.getElementById('endScore').textContent = S.score + ' pts';
+  let icon, t, m;
+  if (pct >= 90) { icon = '&#x1F389;'; t = 'INCREIBLE!'; m = S.ok + '/' + S.total + ' (' + pct + '%) - Eres un experto!'; }
+  else if (pct >= 70) { icon = '&#x1F31F;'; t = 'MUY BIEN!'; m = S.ok + '/' + S.total + ' (' + pct + '%) - Solido conocimiento!'; }
+  else if (pct >= 50) { icon = '&#x1F4AA;'; t = 'BUEN TRABAJO!'; m = S.ok + '/' + S.total + ' (' + pct + '%) - Sigue practicando!'; }
+  else { icon = '&#x1F4DA;'; t = 'SIGUE INTENTANDO!'; m = S.ok + '/' + S.total + ' (' + pct + '%) - Repasa la guia!'; }
+  document.getElementById('endIcon').innerHTML = icon;
+  document.getElementById('endTitle').textContent = t;
+  document.getElementById('endMsg').innerHTML = m + '<br>Racha maxima: ' + S.best;
+  document.getElementById('modalEnd').style.display = 'flex';
+}
+
+function closeEnd(again) {
+  document.getElementById('modalEnd').style.display = 'none';
+  if (again) startG(); else exitG();
+}
+</script>
+</body>
+</html>
