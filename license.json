@@ -1,0 +1,20 @@
+{
+  "license": "MIT",
+  "author": "0noxtackore",
+  "version": "1.0.0",
+  "year": 2025,
+  "project": "MikroTik Quest",
+  "description": "Quiz educativo interactivo basado en el Curso Completo MikroTik",
+  "terms": [
+    "El software se proporciona 'tal cual', sin garantia de ningun tipo.",
+    "Se permite el uso, copia, modificacion y distribucion del software.",
+    "No se permite la redistribucion comercial sin autorizacion explicita.",
+    "Los creditos deben mantenerse visibles en cualquier derivado."
+  ],
+  "credits": {
+    "content": "Ing. Alexis Uranga - Curso Completo MikroTik",
+    "development": "0noxtackore",
+    "icons": "Font Awesome 6.5.1",
+    "sounds": "Varios - Efectos de sonido libres"
+  }
+}

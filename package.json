@@ -1,0 +1,18 @@
+{
+  "name": "mikrotik-quest",
+  "version": "1.0.0",
+  "description": "Quiz interactivo de MikroTik para certificacion MTCNA",
+  "author": "0noxtackore",
+  "license": "SEE LICENSE IN license.json",
+  "private": true,
+  "scripts": {
+    "start": "start quiz-mikrotik.html",
+    "dev": "start quiz-mikrotik.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0noxtackore/mikrotik-quest"
+  },
+  "keywords": ["mikrotik", "mtcna", "quiz", "networking", "educacion"],
+  "browserslist": ["> 1%", "last 2 versions", "not dead"]
+}

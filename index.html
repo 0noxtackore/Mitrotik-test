@@ -115,6 +115,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#1a2a4
     <label><input type="radio" name="qty" value="0"><span>Todas</span></label>
   </div>
   <button class="sbtn" onclick="startG()"><i class="fa-solid fa-play"></i> COMENZAR</button>
+  <div style="font-size:.7em;color:#889;cursor:pointer;text-decoration:underline;margin-top:4px" onclick="showAbout()"><i class="fa-regular fa-file-lines"></i> Acerca de / Licencia</div>
 </div>
 
 <div id="gameScreen">
@@ -161,6 +162,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#1a2a4
 </div>
 
 <div id="toast"></div>
+
+<div class="modal" id="modalAbout">
+  <div class="mc" style="text-align:left;max-width:380px">
+    <div style="text-align:center;font-size:2em;margin-bottom:6px"><i class="fa-solid fa-file-shield"></i></div>
+    <h2 id="abTitle" style="text-align:center">Licencia</h2>
+    <div id="abBody" style="font-size:.8em;color:#556;max-height:50vh;overflow-y:auto;margin:8px 0"></div>
+    <button class="mb" onclick="closeAbout()" style="display:block;margin:0 auto"><i class="fa-solid fa-check"></i> Cerrar</button>
+  </div>
+</div>
 
 <div class="modal" id="modalFb" style="align-items:flex-start;padding-top:15vh">
   <div class="mc" style="text-align:left">
@@ -513,6 +523,31 @@ function closeEnd(again) {
   document.getElementById('modalEnd').style.display = 'none';
   if (again) startG(); else exitG();
 }
+
+function showAbout() {
+  var el = document.getElementById('abBody');
+  el.innerHTML = '<div style="text-align:center;color:#667"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</div>';
+  document.getElementById('modalAbout').style.display = 'flex';
+  fetch('license.json').then(function(r){return r.json()}).then(function(d){
+    var h = '<div style="margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #eef">';
+    h += '<b>' + d.project + '</b> v' + d.version + '<br>';
+    h += '<span style="color:#889">' + d.description + '</span></div>';
+    h += '<div style="margin-bottom:6px"><b>Autor:</b> ' + d.author + '</div>';
+    h += '<div style="margin-bottom:6px"><b>Licencia:</b> ' + d.license + '</div>';
+    h += '<div style="margin-bottom:6px"><b>Año:</b> ' + d.year + '</div>';
+    h += '<div style="margin-bottom:6px"><b>Términos:</b><ul style="margin:4px 0 0 16px;line-height:1.5">';
+    d.terms.forEach(function(t){ h += '<li>' + t + '</li>'; });
+    h += '</ul></div>';
+    h += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid #eef;font-size:.9em;color:#889">';
+    h += '<b>Créditos:</b><br>';
+    for (var k in d.credits) h += '<span style="display:block"><b>' + k + ':</b> ' + d.credits[k] + '</span>';
+    h += '</div>';
+    el.innerHTML = h;
+  }).catch(function(){
+    el.innerHTML = '<div style="text-align:center;color:#dc3545"><i class="fa-solid fa-triangle-exclamation"></i> Error al cargar licencia.</div>';
+  });
+}
+function closeAbout() { document.getElementById('modalAbout').style.display = 'none'; }
 </script>
 </body>
 </html>
